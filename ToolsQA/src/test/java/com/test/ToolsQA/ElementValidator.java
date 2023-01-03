@@ -1,10 +1,15 @@
 package com.test.ToolsQA;
 
-import java.io.IOException;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.time.Duration;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -30,7 +35,7 @@ public class ElementValidator extends Config {
 		driver.quit();
 	}
 
-	@Test(dependsOnMethods = "validtaeCheckBox")
+	@Test
 	public void openElementView() {
 		elementsPom.getElement().click();
 	}
@@ -63,6 +68,43 @@ public class ElementValidator extends Config {
 		jse.executeScript("arguments[0].click()", elementsPom.getExcel());
 		Assert.assertEquals(elementsPom.getresultGeneral().getText() + " " + elementsPom.getresultExcel().getText(),
 				"general " + "excelFile");
+	}
+	
+	@Test(enabled = false)
+	public void validateRadioButtons() {
+		elementsPom.getRadiobutton().click();
+		boolean val = false;
+		val = elementsPom.getradioButtons().get(0).isSelected();
+		if(val) {
+			elementsPom.getradioButtons().get(1).click();
+			String actualText = elementsPom.getActualText().get(1).getText();
+			Assert.assertEquals(actualText, elementsPom.getExpectedText().getText());
+		}else {
+			elementsPom.getradioButtons().get(0).click();
+		}
+		
+	}
+	
+	@Test
+	public void validateWebTebales() throws InterruptedException {
+		JavascriptExecutor jse = (JavascriptExecutor) driver;
+		jse.executeScript("arguments[0].click()", elementsPom.getWebTable());
+		jse.executeScript("arguments[0].click()", elementsPom.getaddElement());
+		jse.executeScript("arguments[0].value='nutan'", elementsPom.getaddFirstName());
+		elementsPom.getaddLastName().sendKeys("malhotra");
+		elementsPom.getEmail().sendKeys("nutan@gmail.com");
+		elementsPom.getaddAge().sendKeys("10");
+		elementsPom.getaddSalary().sendKeys("2000");
+		elementsPom.getaddDepartment().sendKeys("test");
+		jse.executeScript("arguments[0].dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));", elementsPom.getelementSubmit());
+		
+		
+		 //driver.navigate().refresh();
+		for(int i=1; i<elementsPom.gettableRows().size();i++) {
+			if(elementsPom.gettableRows().get(i).getText().contains("Cierra")) {
+				assertTrue(true);
+			}
+		}
 	}
 
 }
